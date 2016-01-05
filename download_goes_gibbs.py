@@ -5,6 +5,14 @@
 	Raul Valenzuela
 	December, 2105
 	raul.valenzuela@colorado.edu
+
+	Note:
+	It assumes a text file with a list of
+	http addresses, such that:
+
+	http://www.ncdc.noaa.gov/gibbs/image/GOE-13/IR/2015-01-10-00
+	...
+	http://www.ncdc.noaa.gov/gibbs/image/GOE-13/IR/2015-02-10-00
 '''
 
 
