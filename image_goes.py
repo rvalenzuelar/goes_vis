@@ -69,31 +69,56 @@ def main():
     #     plt.savefig(fout)
     #     plt.close('all')
 
-    grid = create_figure(figsize=(8, 8), grid=(3, 2))
+    # grid = create_figure(figsize=(8, 8), grid=(3, 2))
+    #
+    # plot_sector(filein=fs[0], ax=grid[0], colorbar=True,
+    #             lonlabel=False, sector=sector, target='irwin_cdr',
+    #             boundary=boundary, id='(a)')
+    # plot_sector(filein=fs[1], ax=grid[2], colorbar=False,
+    #             lonlabel=True, sector=sector, target='irwin_cdr',
+    #             boundary=boundary, id='(c)')
+    # # plot_sector(filein=fs[2], ax=grid[4], colorbar=False,
+    # #             sector=sector, target='irwin_cdr',
+    # #             boundary=boundary, id='(e)')
+    #
+    # plot_sector(filein=fs[0], ax=grid[1], colorbar=True,
+    #             labels=False, sector=sector, target='irwvp',
+    #             boundary=boundary, id='(b)')
+    # plot_sector(filein=fs[1], ax=grid[3], colorbar=False,
+    #             latlabel=False, lonlabel=True,sector=sector,
+    #             target='irwvp',
+    #             boundary=boundary, id='(d)')
+    # # plot_sector(filein=fs[2], ax=grid[5], colorbar=False,
+    # #             latlabel=False, sector=sector, target='irwvp',
+    # #             boundary=boundary, id='(f)')
 
-    plot_sector(filein=fs[0], ax=grid[0], colorbar=True,
-                lonlabel=False, sector=sector, target='irwin_cdr',
+
+    grid = create_figure(figsize=(8, 6), grid=(2, 2))
+
+    plot_sector(filein=fs[0], ax=grid[0],
+                lonlabel=False, sector=sector,
+                target='irwin_cdr',
                 boundary=boundary, id='(a)')
-    plot_sector(filein=fs[1], ax=grid[2], colorbar=False,
-                lonlabel=False, sector=sector, target='irwin_cdr',
-                boundary=boundary, id='(c)')
-    plot_sector(filein=fs[2], ax=grid[4], colorbar=False,
-                sector=sector, target='irwin_cdr',
-                boundary=boundary, id='(e)')
 
-    plot_sector(filein=fs[0], ax=grid[1], colorbar=True,
-                labels=False, sector=sector, target='irwvp',
+    plot_sector(filein=fs[1], ax=grid[1], colorbar=True,
+                cbarpos='right',
+                labels=False, sector=sector,
+                target='irwin_cdr',
                 boundary=boundary, id='(b)')
-    plot_sector(filein=fs[1], ax=grid[3], colorbar=False,
-                labels=False,sector=sector, target='irwvp',
-                boundary=boundary, id='(d)')
-    plot_sector(filein=fs[2], ax=grid[5], colorbar=False,
-                latlabel=False, sector=sector, target='irwvp',
-                boundary=boundary, id='(f)')
 
+    plot_sector(filein=fs[0], ax=grid[2],
+                lonlabel=True, sector=sector,
+                target='irwvp',
+                boundary=boundary, id='(c)')
+
+    plot_sector(filein=fs[1], ax=grid[3], colorbar=True,
+                cbarpos='right',
+                latlabel=False, lonlabel=True,sector=sector,
+                target='irwvp',
+                boundary=boundary, id='(d)')
 
     for g in grid:
-        g.scatter(-73, -37.8, s=50)
+        g.scatter(-73, -37.8, s=50,facecolor='w')
 
     grid[0].annotate('Nahuelbuta',
                      color='white',ha='right',
@@ -102,6 +127,37 @@ def main():
                      arrowprops=dict(arrowstyle="-")
                      )
 
+    grid[0].text(-0.18, 0.5, 'GOES Thermal IR (Ch 4)',
+                 fontsize=13,va='center', rotation=90,
+                 color='k', weight='bold',
+                 transform=grid[0].transAxes)
+
+    grid[1].text(1.15, 0.95, '$^\circ$C',
+                 fontsize=13,va='center',
+                 color='k',
+                 transform=grid[1].transAxes)
+
+    grid[2].text(-0.18, 0.5, 'GOES Water Vapor (Ch 3)',
+                 fontsize=13,va='center',rotation=90,
+                 color='k', weight='bold',
+                 transform=grid[2].transAxes)
+
+    grid[3].text(1.15, 0.95, '$^\circ$C',
+                 fontsize=13,va='center',
+                 color='k',
+                 transform=grid[3].transAxes)
+
+    filedate = fs[0][-23:-10]
+    timest = datetime.strptime(filedate,'%Y.%m.%d.%H')
+    grid[0].text(0.5, 1.05, timest.strftime('%B %-d, %Y - %H00 UTC'),
+            color='black', ha='center',
+            weight='bold',transform=grid[0].transAxes)
+
+    filedate = fs[1][-23:-10]
+    timest = datetime.strptime(filedate,'%Y.%m.%d.%H')
+    grid[1].text(0.5, 1.05, timest.strftime('%B %-d, %Y - %H00 UTC'),
+            color='black', ha='center',
+            weight='bold',transform=grid[1].transAxes)
 
     # grid[0].annotate('lower',
     #                  color='k',ha='right',
@@ -132,10 +188,13 @@ def main():
     #                  )
 
 
-    fout = fs[0].replace('netcdf', 'jpg')
-    fout = fout.replace('nc', 'jpg')
-    plt.savefig(fout)
+    fout = fs[0].replace('nc', 'png')
+    # fout = fout.replace('nc', 'png')
+    print fout
+    plt.savefig(fout,dpi=300)
     plt.close('all')
+
+
     print('ready!')
 
 def create_figure(figsize=None, grid=None):
@@ -143,7 +202,7 @@ def create_figure(figsize=None, grid=None):
     plt.figure(figsize=figsize)
     gs = gridspec.GridSpec(grid[0], grid[1])
     gs.update(top=0.95, bottom=0.05,
-              wspace=0.05, hspace=0)
+              wspace=0.05, hspace=0.05)
     ax = []
     for g in gs:
         ax.append(plt.subplot(g))
@@ -154,7 +213,9 @@ def create_figure(figsize=None, grid=None):
 def plot_sector(filein=None, ax=None,
                 latlabel=True, lonlabel=True,
                 labels=True,
-                colorbar=False, sector=None,
+                colorbar=False,
+                cbarpos='top',
+                sector=None,
                 target=None,
                 boundary=None,
                 id=None):
@@ -210,21 +271,16 @@ def plot_sector(filein=None, ax=None,
         ax.set_xticklabels([])
 
     if colorbar:
-        cbar = add_colorbar(ax, im,loc='top',size='10%',label='',
-                            ticks_inside=True,tick_color='w')
-        cbar.ax.invert_xaxis()
+        cbar = add_colorbar(ax, im,loc=cbarpos,size='10%',label='',
+                            ticks_everyother=True,
+                            fontsize=12)
+        # cbar.ax.invert_xaxis()
+        cbar.ax.invert_yaxis()
 
     if id is not None:
         ax.text(0.05,0.9,id,fontsize=14,
                 color='w',weight='bold',
                 transform=ax.transAxes)
-
-    filedate = filein[-23:-10]
-    timest = datetime.strptime(filedate,'%Y.%M.%d.%H')
-    ax.text(0.05, 0.05, timest.strftime('%Y-%M-%d %HUTC'),
-            color='black',
-            weight='bold',
-            transform=ax.transAxes)
 
     plt.draw()
 
